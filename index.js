@@ -84,16 +84,15 @@ function postAsync(options, requestData){
 async function postTest() {
   
   const postData = JSON.stringify({
-    mode: "raw",
-    raw: {
+    
       username: "admin",
       password: "admin(*)!@34\"}"
-    }
+    
   });
 
   const options = {
-    hostname: 'kekeai.wenxinkejian.com',
-    port: 80,
+    hostname: 'www.wenxinkejian.com',
+    // port: 43,
     path: '/api/login',
     method: 'POST',
     headers: {
@@ -126,7 +125,7 @@ async function postTest() {
   // req.end()
 }
 async function bootstrap() {
-  await initDB();
+  // await initDB();
 
   app.listen(port, () => {
     console.log("启动成功", port);
