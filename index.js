@@ -57,28 +57,34 @@ const port = process.env.PORT || 80;
 
 function postAsync(options, requestData){
   return new Promise((resolve, reject) => {
-    const req = http.request(options, (res) => {
-      const chunks = [];
+    try{
 
-      res.on('data', (chunk) => {
-        chunks.push(chunk);
+      const req = http.request(options, (res) => {
+        const chunks = [];
+  
+        res.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+  
+        res.on('end', () => {
+          const responseBody = Buffer.concat(chunks).toString();
+          resolve({ responseBody, responseHeaders: res.headers });
+        });
       });
-
-      res.on('end', () => {
-        const responseBody = Buffer.concat(chunks).toString();
-        resolve({ responseBody, responseHeaders: res.headers });
+  
+      req.on('error', (err) => {
+        reject(err);
       });
-    });
-
-    req.on('error', (err) => {
-      reject(err);
-    });
-
-    if (requestData) {
-      req.write(requestData);
+  
+      if (requestData) {
+        req.write(requestData);
+      }
+  
+      req.end();
+    }catch(e){
+      reject(e);
     }
-
-    req.end();
+   
   });
 }
 async function postTest() {
