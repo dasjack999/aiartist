@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const { init: initDB, Counter } = require("./db");
+const http = require('node:https');
 
 const logger = morgan("tiny");
 
@@ -14,7 +15,8 @@ app.use(logger);
 
 // 首页
 app.get("/", async (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  // res.sendFile(path.join(__dirname, "index.html"));
+  res.json(await postTest());
 });
 
 // 更新计数
@@ -36,7 +38,7 @@ app.post("/api/count", async (req, res) => {
 // 获取计数
 app.get("/api/count", async (req, res) => {
   const result = await Counter.count();
-  postTest();
+  
   res.send({
     code: 0,
     data: result,
@@ -53,9 +55,34 @@ app.get("/api/wx_openid", async (req, res) => {
 
 const port = process.env.PORT || 80;
 
-function postTest() {
-  const http = require('node:http');
+function postAsync(options, requestData){
+  return new Promise((resolve, reject) => {
+    const req = http.request(options, (res) => {
+      const chunks = [];
 
+      res.on('data', (chunk) => {
+        chunks.push(chunk);
+      });
+
+      res.on('end', () => {
+        const responseBody = Buffer.concat(chunks).toString();
+        resolve({ responseBody, responseHeaders: res.headers });
+      });
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    if (requestData) {
+      req.write(requestData);
+    }
+
+    req.end();
+  });
+}
+async function postTest() {
+  
   const postData = JSON.stringify({
     mode: "raw",
     raw: {
@@ -75,26 +102,28 @@ function postTest() {
     },
   };
 
-  const req = http.request(options, (res) => {
-    console.log(`STATUS: ${res.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
-      console.log(`BODY: ${chunk}`);
-    });
-    res.on('end', () => {
-      console.log('No more data in response.');
+  var result = await postAsync(options,postData);
+  return result;
+  // const req = http.request(options, (res) => {
+  //   console.log(`STATUS: ${res.statusCode}`);
+  //   console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+  //   res.setEncoding('utf8');
+  //   res.on('data', (chunk) => {
+  //     console.log(`BODY: ${chunk}`);
+  //   });
+  //   res.on('end', () => {
+  //     console.log('No more data in response.');
 
-    });
-  });
+  //   });
+  // });
 
-  req.on('error', (e) => {
-    console.error(`problem with request: ${e.message}`);
-  });
+  // req.on('error', (e) => {
+  //   console.error(`problem with request: ${e.message}`);
+  // });
 
-  // Write data to request body
-  req.write(postData);
-  req.end()
+  // // Write data to request body
+  // req.write(postData);
+  // req.end()
 }
 async function bootstrap() {
   await initDB();
