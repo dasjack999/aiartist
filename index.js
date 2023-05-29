@@ -36,9 +36,11 @@ app.post("/api/count", async (req, res) => {
 // 获取计数
 app.get("/api/count", async (req, res) => {
   const result = await Counter.count();
+  postTest();
   res.send({
     code: 0,
     data: result,
+
   });
 });
 
@@ -51,8 +53,52 @@ app.get("/api/wx_openid", async (req, res) => {
 
 const port = process.env.PORT || 80;
 
+function postTest() {
+  const http = require('node:http');
+
+  const postData = JSON.stringify({
+    mode: "raw",
+    raw: {
+      username: "admin",
+      password: "admin(*)!@34\"}"
+    }
+  });
+
+  const options = {
+    hostname: 'kekeai.wenxinkejian.com',
+    port: 80,
+    path: '/api/login',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData),
+    },
+  };
+
+  const req = http.request(options, (res) => {
+    console.log(`STATUS: ${res.statusCode}`);
+    console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => {
+      console.log(`BODY: ${chunk}`);
+    });
+    res.on('end', () => {
+      console.log('No more data in response.');
+
+    });
+  });
+
+  req.on('error', (e) => {
+    console.error(`problem with request: ${e.message}`);
+  });
+
+  // Write data to request body
+  req.write(postData);
+  req.end()
+}
 async function bootstrap() {
   await initDB();
+
   app.listen(port, () => {
     console.log("启动成功", port);
   });
