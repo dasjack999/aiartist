@@ -48,7 +48,7 @@ app.get("/api/count", async (req, res) => {
 
 app.get("/api/draw", async (req, res) => {
 
-  const result = await postJson('www.wenxinkejian.com','/api/draw',req.body)
+  const result = await postJson('www.wenxinkejian.com','/draw',req.body)
   res.send({
     code: 0,
     data: result,
