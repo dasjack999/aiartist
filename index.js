@@ -46,6 +46,16 @@ app.get("/api/count", async (req, res) => {
   });
 });
 
+app.get("/api/draw", async (req, res) => {
+
+  const result = await postJson('www.wenxinkejian.com','/api/draw',req.body)
+  res.send({
+    code: 0,
+    data: result,
+
+  });
+});
+
 // 小程序调用，获取微信 Open ID
 app.get("/api/wx_openid", async (req, res) => {
   if (req.headers["x-wx-source"]) {
@@ -86,6 +96,20 @@ function postAsync(options, requestData){
     }
    
   });
+}
+async function postJson(base,path,obj){
+  const postData=JSON.stringify(obj);
+  const options = {
+    hostname: base,
+    path: path,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData),
+    },
+  };
+
+  return await postAsync(options,postData);
 }
 async function postTest() {
   
