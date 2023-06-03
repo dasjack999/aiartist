@@ -45,10 +45,18 @@ app.get("/api/count", async (req, res) => {
 
   });
 });
+app.get("/api/model", async (req, res) => {
+  const result = await postJson('www.wenxinkejian.com','/api/model');
+  
+  res.send({
+    code: 0,
+    data: result,
 
+  });
+});
 app.post("/api/draw", async (req, res) => {
 
-  const result = await postJson('www.wenxinkejian.com','/api/draw',req.body)
+  const result = await postJson('www.wenxinkejian.com','/api/draw',req.body);
   res.send({
     code: 0,
     data: result,
@@ -65,7 +73,7 @@ app.get("/api/wx_openid", async (req, res) => {
 
 const port = process.env.PORT || 80;
 
-function postAsync(options, requestData){
+function requestAsync(options, requestData){
   return new Promise((resolve, reject) => {
     try{
 
@@ -98,18 +106,39 @@ function postAsync(options, requestData){
   });
 }
 async function postJson(base,path,obj){
-  const postData=JSON.stringify(obj);
+  const data=obj&&JSON.stringify(obj);
   const options = {
     hostname: base,
     path: path,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(postData),
+      'Content-Length': Buffer.byteLength(data),
     },
   };
 
-  return await postAsync(options,postData);
+  return await requestAsync(options,postData);
+}
+async function getJson(base,path,obj){
+  
+  if(obj){
+    let data= '';
+    for(const k in obj){
+      data +=k+'='+JSON.stringify( obj[k])+'&';
+    }
+    path = path+'?'+data;
+  }
+  const options = {
+    hostname: base,
+    path: path,
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Content-Length': Buffer.byteLength(postData),
+    },
+  };
+
+  return await requestAsync(options,postData);
 }
 async function postTest() {
   
@@ -131,7 +160,7 @@ async function postTest() {
     },
   };
 
-  var result = await postAsync(options,postData);
+  var result = await requestAsync(options,postData);
   return result;
   // const req = http.request(options, (res) => {
   //   console.log(`STATUS: ${res.statusCode}`);
