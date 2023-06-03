@@ -118,7 +118,7 @@ async function postJson(base,path,obj){
     },
   };
 
-  return await requestAsync(options,postData);
+  return await requestAsync(options,data);
 }
 async function getJson(base,path,obj){
   
