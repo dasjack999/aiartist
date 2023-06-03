@@ -54,6 +54,7 @@ app.get("/api/model", async (req, res) => {
 
   });
 });
+
 app.post("/api/draw", async (req, res) => {
 
   const result = await postJson('www.wenxinkejian.com','/api/draw',req.body);
@@ -113,7 +114,7 @@ async function postJson(base,path,obj){
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(data),
+      'Content-Length': Buffer.byteLength(data||''),
     },
   };
 
