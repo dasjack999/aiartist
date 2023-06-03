@@ -118,7 +118,8 @@ async function postJson(base,path,obj){
     },
   };
 
-  return await requestAsync(options,data);
+  const result= await requestAsync(options,data);
+  return result.responseBody;
 }
 async function getJson(base,path,obj){
   
@@ -139,7 +140,8 @@ async function getJson(base,path,obj){
     },
   };
 
-  return await requestAsync(options,postData);
+  const result= await requestAsync(options,data);
+  return result.responseBody;
 }
 async function postTest() {
   
