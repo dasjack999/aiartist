@@ -33,6 +33,12 @@ app.post("/api/draw", async (req, res) => {
   const result = await postJson('www.wenxinkejian.com','/api/draw',req.body);
   res.send(result);
 });
+app.post("/api/work", async (req, res) => {
+
+  const result = await postJson('www.wenxinkejian.com','/api/work',req.body);
+  res.send(result);
+});
+
 
 // 小程序调用，获取微信 Open ID
 app.get("/api/wx_openid", async (req, res) => {
