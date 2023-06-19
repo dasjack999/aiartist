@@ -99,7 +99,7 @@ async function _getJson(base,path,obj){
 /**
  * 获取模板库
  */
-app.get("/api/model", async (req, res) => {
+app.post("/api/model", async (req, res) => {
   const result = await postJson('www.wenxinkejian.com','/api/model',req.body);
   res.send(result);
 });
