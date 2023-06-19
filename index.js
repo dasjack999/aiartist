@@ -95,7 +95,19 @@ async function _getJson(base,path,obj){
 //   res.sendFile(path.join(__dirname, "index.html"));
 //   // res.json(await postTest());
 // });
-
+/**
+ * 获取首页信息
+ */
+app.post("/api/home",(req, res) => {
+  const _version = req.body.version;
+  //
+  res.json({
+    tabList: [{
+      text: '精选推荐',
+      key: 0,
+    }, ],
+  });
+});
 /**
  * 获取模板库
  */
